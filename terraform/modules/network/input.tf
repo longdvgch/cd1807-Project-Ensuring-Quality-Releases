@@ -1,5 +1,5 @@
 # Resource Group
-variable resource_group {}
+variable resource_group_name {}
 variable location {}
 # Network
 variable virtual_network_name {}

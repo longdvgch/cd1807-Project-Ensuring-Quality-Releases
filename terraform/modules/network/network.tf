@@ -2,11 +2,11 @@ resource "azurerm_virtual_network" "test" {
   name                 = "${var.application_type}-${var.resource_type}"
   address_space        = "${var.address_space}"
   location             = "${var.location}"
-  resource_group_name  = "${var.resource_group}"
+  resource_group_name  = "${var.resource_group_name}"
 }
 resource "azurerm_subnet" "test" {
   name                 = "${var.application_type}-${var.resource_type}-sub"
-  resource_group_name  = "${var.resource_group}"
+  resource_group_name  = "${var.resource_group_name}"
   virtual_network_name = "${azurerm_virtual_network.test.name}"
-  address_prefix       = "${var.address_prefix_test}"
+  address_prefixes       = "${var.address_prefix_test}"
 }
