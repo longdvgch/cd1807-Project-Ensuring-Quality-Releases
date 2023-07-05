@@ -1,6 +1,18 @@
 name: Azure Pipelines
+
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+trigger:
+- dev
+
+# ToDo: Replace the agent pool name, if you are using Udacity Cloud lab. 
+# Otherwise comment out the line below. 
+pool: myAgentPool
+
 variables:
-  # Azure Resource Manager service connection for pipelines
+  python.version: '3.9.17'
+  # ToDo: Replace the service connection name as used in the DevOps project settings
   azureServiceConnectionId: 'myServiceConnection'
 
   python.version: '3.9.17'
@@ -18,40 +30,24 @@ variables:
   environmentName: 'test'
 
 stages:
+#--------------------------------------------#  
+# BUILD STAGE
+#--------------------------------------------#    
 - stage: Build
   jobs:
   - job: Build
     pool: myAgentPool
     steps:
-
-    - task: Bash@3
-      displayName: 'Install Postman & Newman'
-      inputs:
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
-          pwd
-
-      # Needed for Terraform VM deployment
-    - task: InstallSSHKey@0
-      inputs:
-        knownHostsEntry: ' AAAAB3NzaC1yc2EAAAADAQABAAABgQC5VpMEVQGLQ/YFvCcLj1BixKVfUM8UHUt3YbUCkQWSKN47PZUCS3tprr5TKh8bOhzyRZOwqtwyJvk4Abvh0t7l0eDKXuEzxGBkWH75RJPqdcEIGndZOn8TmUhb5pYoCTswHG1LRjqVjVGmhVJ2NRv8ofgViocl6Ln7vehuggt8HpN6LESYoB7sCfjc2zoY5ngFtQOKYj099GHYF96pXt43TNtiYaHJ6w82/tA0PyZAnEFBG8mYnarVQPVIE1mkJ7BooHtp8LQQwfuIfDtlv2iDyUIUiyILAZ7BKF1FB7NKoaxYYXoBerwDnO2x4hWPnZJKf+yizkd8PbsT2LCAKTfiyaWHHbsb6zJvP5LYxmsyLHcLZBke3yMsn0l8pNWctGrc+6Xv3S1nc/jKpXqtMWDm6JE/M0IhwnwCywtpXvGENn/ozSRMBiCHtpqUxjcG4IMeRuOkrXVRvQC5JUleEa64XlJRvtOvk3xkmopage1fiXFgOs7VSLe/wnNlEukdGn0='
-        sshPublicKey: '$(udacityPubKey)'
-        sshKeySecureFile: 'udacity_id_rsa'
-
-    - task: DownloadSecureFile@1
-      name: udacity_public_key
-      displayName: 'Download Public Key'
-      inputs:
-        secureFile: 'udacity_id_rsa.pub'
-        
+    # Install Terraform on the pipeline agent 
     - task: TerraformInstaller@0
       displayName: 'Install Terraform'
       inputs:
         terraformVersion: '1.2.9'
-
-    - task: TerraformTaskV1@0
-      displayName: 'Initialize Terraform'
+    
+    # Run Terraform Init on the pipeline agent 
+    # ToDo: Replace the resource group name, storage account name, and container name below
+    - task: TerraformTaskV3@3
+      displayName: 'Terrafom init'
       inputs:
         provider: 'azurerm'
         command: 'init'
@@ -62,8 +58,18 @@ stages:
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'test.terraform.tfstate'
 
-    - task: TerraformTaskV1@0
-      displayName: 'Deploy Cloud Infrastructure'
+    # Run Terraform Validate    
+    - task: TerraformTaskV3@3
+      displayName: Terraform validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+
+    
+    # Run Terraform Apply
+    # ToDo: Change the workingDirectory path, as applicable to you
+    - task: TerraformTaskV3@3
+      displayName: Terraform apply
       inputs:
         provider: 'azurerm'
         command: 'apply'
@@ -71,169 +77,12 @@ stages:
         commandOptions: '-var "public_key_path=$(udacity_public_key.secureFilePath)"'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
-    - task: ArchiveFiles@2
-      displayName: 'Archive FakeRestAPI'
+    # Destroy the resources in Azure
+    # ToDo: Change the workingDirectory path, as applicable to you
+    - task: TerraformTaskV3@3
+      displayName: Terraform destroy
       inputs:
-        rootFolderOrFile: 'automatedtesting/jmeter/fakerestapi'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload FakeRestAPI Package'
-      artifact: drop-fakerestapi
-
-    - publish: automatedtesting/selenium/functional_ui_test.py
-      displayName: 'Upload UI Tests definition'
-      artifact: drop-ui-tests
-
-- stage: Deploy
-  jobs:
-  - deployment: DeployFakeRestAPI
-    displayName: 'Deploy app to custom VM'
-    pool: myAgentPool
-    environment: 'test'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-            - task: AzureWebApp@1
-              displayName: 'Deploy Azure Web App'
-              inputs:
-                azureSubscription: '$(azureServiceConnectionId)'
-                appName: $(webAppName)
-                appType: webApp
-                package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip
-
-- stage: Tests
-  jobs:
-
-  - job: Integration
-    displayName: 'Integration Tests'
-    pool: myAgentPool
-    steps:
-
-    - task: Bash@3
-      displayName: 'Install Postman & Newman'
-      inputs:
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
-          pwd
-          sudo snap install postman
-          sudo npm install -g newman
-          sudo npm install newman-reporter-junitfull -g      
-
-    - task: Bash@3
-      displayName: 'Regression Tests'
-      inputs:
-        workingDirectory: 'automatedtesting/postman'
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
-
-          newman run RegressionTest.json \
-            -e MyEnv.json \
-            -r cli,junitfull \
-            --reporter-junitfull-export JUnitReportRegression.xml
-
-    - task: Bash@3
-      displayName: 'Data Validation Tests'
-      inputs:
-        workingDirectory: 'automatedtesting/postman'
-        targetType: 'inline'
-        script: |
-          #! /bin/bash
-
-          newman run ValidationTest.json \
-            -e MyEnv.json \
-            -r cli,junitfull \
-            --reporter-junitfull-export JUnitReportValidation.xml
-
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/JUnitReport*.xml'
-        testRunTitle: 'Publish test results'
-        searchFolder: 'automatedtesting/postman'
-
-  - job: Performance
-    displayName: 'Performance Tests'
-    pool: myAgentPool
-    steps:
-
-    - task: JMeterInstaller@0
-      displayName: 'Install JMeter 5.2.1'
-      inputs:
-        jmeterVersion: '5.2.1'
-    
-    - task: Bash@3
-      displayName: 'Endurance Test Suite'
-      inputs:
-        targetType: 'inline'
-        script: |
-          jmeter -n \
-            -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
-            -l endurance-test-report/endurance-results.jtl \
-            -e \
-            -o endurance-test-report
-
-    - task: publishhtmlreport@1
-      displayName: 'Publish Endurance Test Results'
-      inputs:
-        htmlType: 'Jmeter'
-        JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'    
-
-    - task: Bash@3
-      displayName: 'Stress Test Suite'
-      inputs:
-        targetType: 'inline'
-        script: |
-          jmeter -n \
-            -t automatedtesting/jmeter/StressTestSuite.jmx \
-            -l stress-test-report/stress-results.jtl \
-            -e \
-            -o stress-test-report
-
-    - task: publishhtmlreport@1
-      displayName: 'Publish Stress Test Results'
-      inputs:
-        htmlType: 'Jmeter'
-        JmeterReportsPath: '$(Build.SourcesDirectory)/stress-test-report'    
-        
-        
-    - task: Bash@3
-      displayName: 'Print Performance Test Logs'
-      inputs:
-        targetType: 'inline'
-        script: |
-          ls -lah endurance-test-report/
-          ls -lah stress-test-report/
-          cat jmeter.log        
-
-  - deployment: Functional
-    displayName: 'Functional UI Tests'
-    environment:
-      name:  'TEST'
-      resourceType: VirtualMachine
-      tags: test, packer-created-vm
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          
-          - download: current
-            artifact: drop-ui-tests
-
-          - task: Bash@3
-
-            displayName: 'Selenium Tests'
-            inputs:
-              targetType: 'inline'
-              script: |
-                #! /bin/bash
-                echo 'Hello from a custom VM with pre-installed Selenium, Chromium-browser & Chromedriver!'
-                source env/bin/activate
-                export PATH=$PATH:`pwd` # add chromedriver executable to path
-                python3 ../drop-ui-tests/functional_ui_test.py
-                cat selenium.log
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)'        
