@@ -44,7 +44,7 @@ module "appservice" {
   source           = "../../modules/appservice"
   location         = "${var.location}"
   application_type = "${var.application_type}"
-  resource_type    = "AppService"
+  resource_type    = "appservice"
   resource_group_name   = "${module.resource_group.resource_group_name}"
 }
 module "publicip" {
@@ -54,12 +54,13 @@ module "publicip" {
   resource_type    = "publicip"
   resource_group_name   = "${module.resource_group.resource_group_name}"
 }
-#module "vm" {
-#  source               = "../../modules/vm"
-#  location             = "${var.location}"
-#  resource_group_name  = "${module.resource_group.resource_group_name}"
-#
-#  admin_username       = "${var.admin_username}"
-#  subnet_id_test       = "${module.network.subnet_id_test}"
-#  public_ip_address_id = "${module.publicip.public_ip_address_id}"
-#}
+module "vm" {
+  source               = "../../modules/vm"
+  location             = "${var.location}"
+  resource_group_name  = "${module.resource_group.resource_group_name}"
+
+  admin_username       = "${var.admin_username}"
+  subnet_id_test       = "${module.network.subnet_id_test}"
+  public_ip_address_id = "${module.publicip.public_ip_address_id}"
+  packer_image         = "${var.packer_image}"
+}

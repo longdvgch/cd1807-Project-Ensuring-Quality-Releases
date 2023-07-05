@@ -16,4 +16,5 @@ variable address_space {}
 variable "source_address_prefix_test" {}
 
 variable "admin_username" {}
+variable "packer_image" {}
 

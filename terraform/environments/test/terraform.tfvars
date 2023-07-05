@@ -17,4 +17,5 @@ source_address_prefix_test = "10.5.1.0/24"
 
 # VM
 admin_username = "londv3"
+packer_image = "/subscriptions/2c945c38-335b-429c-a85b-f8d8dedeaa68/resourceGroups/Packer/providers/Microsoft.Compute/images/packer-image"
 

@@ -2,34 +2,38 @@
     "variables": {
       "client_id": "7953aed4-5191-45a1-8489-b419281e4ea0",
       "client_secret": "m548Q~vEX8QXPkU3OrktSe2BZv28NYx5OpX2XbSl",
-      "subscription_id": "2c945c38-335b-429c-a85b-f8d8dedeaa68"
+      "subscription_id": "2c945c38-335b-429c-a85b-f8d8dedeaa68",
+      "tenant_id": "5f3260bf-19c5-4cde-92b6-9549dcee4601",
+      "resource_group_name": "Packer",
+      "image_name": "packer-image",
+      "vm_size": "Standard_B1s"
     },
     "builders": [{
       "type": "azure-arm",
-  
+
       "client_id": "{{user `client_id`}}",
       "client_secret": "{{user `client_secret`}}",
+      "tenant_id": "{{user `tenant_id`}}",
       "subscription_id": "{{user `subscription_id`}}",
-  
+
+      "managed_image_resource_group_name": "{{user `resource_group_name`}}",
+      "build_resource_group_name": "{{user `resource_group_name`}}",
+      "managed_image_name": "{{user `image_name`}}",
+
       "os_type": "Linux",
       "image_publisher": "Canonical",
       "image_offer": "UbuntuServer",
       "image_sku": "18.04-LTS",
-  
-      "managed_image_resource_group_name": "Azuredevops",
-      "managed_image_name": "myPackerImage",
-  
-      "location": "East US",
-      "vm_size": "Standard_B1s"
+      "vm_size": "{{user `vm_size`}}"
     }],
     "provisioners": [{
       "inline": [
           "apt-get update",
           "apt-get upgrade -y",
-          "apt-get install python3-pip -y",
-          "apt-get install unzip -y",
+          "apt-get install -y python3-pip",
+          "apt-get install -y unzip",
           "apt-get install -y chromium-browser",
-          "apt-get install python3-venv",
+          "apt-get install -y python3-venv",
           "python3 -m venv env",
           "pip3 install selenium",
           "wget https://chromedriver.storage.googleapis.com/87.0.4280.88/chromedriver_linux64.zip",
