@@ -210,7 +210,7 @@ stages:
               targetType: 'inline'
               script: |
                 jmeter -n \
-                  -t automatedtesting/jmeter/EnduranceTestSuite.jmx \
+                  -t automatedtesting/jmeter/EnduranceTest.jmx \
                   -l endurance-test-report/endurance-results.jtl \
                   -e \
                   -o endurance-test-report
@@ -226,7 +226,7 @@ stages:
               targetType: 'inline'
               script: |
                 jmeter -n \
-                  -t automatedtesting/jmeter/StressTestSuite.jmx \
+                  -t automatedtesting/jmeter/StressTest.jmx \
                   -l stress-test-report/stress-results.jtl \
                   -e \
                   -o stress-test-report
