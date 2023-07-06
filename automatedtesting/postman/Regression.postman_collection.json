@@ -35,8 +35,8 @@
 					}
 				},
 				"url": {
-					"raw": "http://dummy.restapiexample.com/api/v1/create",
-					"protocol": "http",
+					"raw": "https://dummy.restapiexample.com/api/v1/create",
+					"protocol": "https",
 					"host": [
 						"dummy",
 						"restapiexample",
