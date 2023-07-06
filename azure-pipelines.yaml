@@ -276,13 +276,14 @@ stages:
 #--------------------------------------Destroy Resources---------------------------
 - stage: Destroy Resources
   jobs:
-  - job: Destroy 
-    displayName: Terraform Destroy
-    pool: myAgentPool
-    steps:
-    - task: TerraformCLI@0
-      inputs:
-        provider: 'azurerm'
-        command: 'destroy'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-        environmentServiceNameAzureRM: '$(azureServiceConnectionId)' 
+    - job: Destroy 
+      displayName: Terraform Destroy
+      pool: myAgentPool
+      steps:
+      - task: TerraformCLI@0
+        inputs:
+          command: 'destroy'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+          environmentServiceName: '$(azureServiceConnectionId)'        
+          secureVarsFile: 'terraform.tfvars'
+          allowTelemetryCollection: true
