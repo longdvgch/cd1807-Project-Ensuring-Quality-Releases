@@ -278,10 +278,13 @@ stages:
     displayName: Terraform Destroy
     pool: myAgentPool
     steps:
-    - task: TerraformCLI@0
+    - task: TerraformInstaller@0
+      displayName: 'Terrafom installation'
       inputs:
-        terraformPath: '/path/to/terraform'
+        terraformVersion: '1.2.9'
+    - task: TerraformTaskV3@3
+      inputs:
         provider: 'azurerm'
-        command: 'destroy'
+        command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)' 
