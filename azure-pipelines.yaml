@@ -69,7 +69,6 @@ stages:
     #  displayName: 
     #  inputs:
     #   secureFile: 
-
     
     # Run Terraform Apply
     - task: TerraformTaskV3@3
@@ -79,16 +78,6 @@ stages:
         command: 'apply'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
-
-    # ToDo: Change the workingDirectory path, as applicable to you
-    # Destroy the resources in Azure by running a separate pipeline. 
-    # - task: TerraformTaskV3@3
-    #   displayName: Terraform destroy
-    #   inputs:
-    #     provider: 'azurerm'
-    #     command: 'destroy'
-    #     workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-    #     environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
 #--------------------------------------------#    
     # Postman - Install Newman    
@@ -189,17 +178,7 @@ stages:
               appName: 'longdv-AppService'
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip 
-          #--------------------------------------------#    
-          # Run JMeter test suite against the App Service
-         #- task: CmdLine@2
-         #  inputs:
-         #    script: |
-         #      wget "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.tgz"
-         #      tar -xf apache-jmeter-5.6.tgz
-         #      unzip -o $(Build.BuildId)-perftests.zip
-         #      ./apache-jmeter-5.6/bin/jmeter -n -t Starter.jmx -j jmeter.log -f
-         #      cat jmeter.log                                                                                           # ToDo: Write your commands
-         #    workingDirectory: $(Pipeline.Workspace)/drop-perftests
+
           - task: JMeterInstaller@0
             displayName: 'Install JMeter 5.2.1'
             inputs:
@@ -291,3 +270,19 @@ stages:
                 echo "Starting Selenium Tests"
                 python3 add_remove_from_cart.py >> selenium.log
                 echo "Completed Selenium Tests. Check selenium.log for results."
+
+
+
+#--------------------------------------Destroy Resources---------------------------
+  - stage: Destroy Resources
+    jobs:
+    - job: Destroy 
+      displayName: Terraform Destroy
+      pool: myAgentPool
+      steps:
+      - task: TerraformCLI@0
+        inputs:
+          provider: 'azurerm'
+          command: 'destroy'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+          environmentServiceNameAzureRM: '$(azureServiceConnectionId)' 
