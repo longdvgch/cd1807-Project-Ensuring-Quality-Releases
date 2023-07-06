@@ -274,15 +274,15 @@ stages:
 
 
 #--------------------------------------Destroy Resources---------------------------
-  - stage: Destroy Resources
-    jobs:
-    - job: Destroy 
-      displayName: Terraform Destroy
-      pool: myAgentPool
-      steps:
-      - task: TerraformCLI@0
-        inputs:
-          provider: 'azurerm'
-          command: 'destroy'
-          workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
-          environmentServiceNameAzureRM: '$(azureServiceConnectionId)' 
+- stage: Destroy Resources
+  jobs:
+  - job: Destroy 
+    displayName: Terraform Destroy
+    pool: myAgentPool
+    steps:
+    - task: TerraformCLI@0
+      inputs:
+        provider: 'azurerm'
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
+        environmentServiceNameAzureRM: '$(azureServiceConnectionId)' 
