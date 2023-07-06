@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "4d46b234-6417-4fcd-8ebb-b20967ff47f0",
+		"name": "Validation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = JSON.parse(pm.request.body.toJSON().raw);",
+							"",
+							"pm.test(\"Body has correct name and data type\", function () {",
+							"    pm.expect(jsonData.name).to.be.a(\"string\");",
+							"    pm.expect(typeof jsonData.name).to.eql(\"string\");",
+							"});",
+							"",
+							"pm.test(\"Body has correct salary and data type\", function () {",
+							"    pm.expect(jsonData.salary).to.be.a(\"number\");",
+							"    pm.expect(typeof jsonData.salary).to.eql(\"number\");",
+							"});",
+							"",
+							"pm.test(\"Body has correct age and data type\", function () {",
+							"    pm.expect(jsonData.age).to.be.a(\"number\");",
+							"    pm.expect(typeof jsonData.age).to.eql(\"number\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"{{name}}\",\n    \"salary\": {{salary}},\n    \"age\": {{age}}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://dummy.restapiexample.com/api/v1/create",
+					"protocol": "https",
+					"host": [
+						"dummy",
+						"restapiexample",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Employees",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Content-Type is present\", function () {",
+							"",
+							"    pm.response.to.have.header(\"Content-Type\");",
+							"",
+							"});",
+							"",
+							"pm.test(\"Content-Type is application/json\", function () {",
+							"",
+							"    pm.expect(postman.getResponseHeader(\"Content-Type\")).to.include(\"application/json\");",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://dummy.restapiexample.com/api/v1/employees",
+					"protocol": "http",
+					"host": [
+						"dummy",
+						"restapiexample",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"employees"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
