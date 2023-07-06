@@ -274,7 +274,7 @@ stages:
 
 
 #--------------------------------------Destroy Resources---------------------------
-- stage: Destroy Resources
+- stage: Destroy_Resources
   jobs:
   - job: Destroy 
     displayName: Terraform Destroy
