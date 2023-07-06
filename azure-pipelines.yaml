@@ -294,8 +294,9 @@ stages:
         backendAzureRmContainerName: 'tfstate'
         backendAzureRmKey: 'test.terraform.tfstate'
     - task: TerraformTaskV3@3
+      displayName: 'Terrafom Destroy'
       inputs:
         provider: 'azurerm'
-        command: 'apply'
+        command: 'destroy'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)' 
