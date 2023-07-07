@@ -244,7 +244,7 @@ stages:
               script: |
                 sudo mkdir -p /var/logs/seleniumlogfile.txt
                 sudo chmod 775 /var/logs/seleniumlogfile.txt
-                sudo python3 -u functional_ui_test.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
+                sudo python3 -u $(System.DefaultWorkingDirectory)/drop-uitests/functional_ui_test.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
                 cd $(System.DefaultWorkingDirectory)
                 mkdir -p logs/selenium
                 pwd
