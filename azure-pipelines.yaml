@@ -148,7 +148,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive PerformanceTestSuite'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/test-suite'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
@@ -191,7 +191,7 @@ stages:
               script: |
                 cat automatedtesting/jmeter/EnduranceTest.jmx
                 jmeter -n \
-                  -t automatedtesting/jmeter/EnduranceTest.jmx \
+                  -t automatedtesting/jmeter/test-suite/EnduranceTest.jmx \
                   -l endurance-test-report/endurance-results.jtl \
                   -e \
                   -o endurance-test-report
@@ -208,7 +208,7 @@ stages:
               targetType: 'inline'
               script: |
                 jmeter -n \
-                  -t automatedtesting/jmeter/StressTest.jmx \
+                  -t automatedtesting/jmeter/test-suite/StressTest.jmx \
                   -l stress-test-report/stress-results.jtl \
                   -e \
                   -o stress-test-report
