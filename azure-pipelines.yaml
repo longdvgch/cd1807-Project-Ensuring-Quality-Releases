@@ -183,11 +183,13 @@ stages:
             displayName: 'Install JMeter 5.2.1'
             inputs:
               jmeterVersion: '5.2.1'
+              
           - task: Bash@3
             displayName: 'Endurance Test Suite'
             inputs:
               targetType: 'inline'
               script: |
+                cat automatedtesting/jmeter/EnduranceTest.jmx
                 jmeter -n \
                   -t automatedtesting/jmeter/EnduranceTest.jmx \
                   -l endurance-test-report/endurance-results.jtl \
@@ -199,6 +201,7 @@ stages:
             inputs:
               htmlType: 'Jmeter'
               JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'
+              
           - task: Bash@3
             displayName: 'Stress Test Suite'
             inputs:
