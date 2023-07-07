@@ -119,7 +119,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive UI Tests'
       inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium/functional_ui_test.py'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-uitests.zip'
@@ -247,7 +247,7 @@ stages:
               script: |
                 sudo mkdir -p /var/logs/seleniumlogfile.txt
                 sudo chmod 775 /var/logs/seleniumlogfile.txt
-                sudo python3 -u $(Pipeline.Workspace)/drop-uitests/functional_ui_test.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
+                sudo python3 -u ../drop-uitests/functional_ui_test.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
                 cd $(System.DefaultWorkingDirectory)
                 mkdir -p logs/selenium
                 pwd
