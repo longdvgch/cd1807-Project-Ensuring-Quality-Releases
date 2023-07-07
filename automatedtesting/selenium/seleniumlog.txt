@@ -1,0 +1,21 @@
+2023-07-07 15:28:08 Starting the browser...
+2023-07-07 15:28:09 Browser started. Access to the demo page to login.
+2023-07-07 15:28:10 Successfully logged in as standard_user
+2023-07-07 15:28:10 Starting the shopping...
+2023-07-07 15:28:11 Successfully found 6 product items.
+2023-07-07 15:28:11 Succesfully added to shopping cart: Sauce Labs Backpack
+2023-07-07 15:28:11 Succesfully added to shopping cart: Sauce Labs Backpack
+2023-07-07 15:28:11 Succesfully added to shopping cart: Sauce Labs Backpack
+2023-07-07 15:28:11 Succesfully added to shopping cart: Sauce Labs Backpack
+2023-07-07 15:28:11 Succesfully added to shopping cart: Sauce Labs Backpack
+2023-07-07 15:28:11 Succesfully added to shopping cart: Sauce Labs Backpack
+2023-07-07 15:28:11 Succesfully added to shopping cart: 6 items in total
+2023-07-07 15:28:11 A spouse came in, need to destroy the the evidence... ;-)
+2023-07-07 15:28:11 Successfully entered the shopping cart page.
+2023-07-07 15:28:11 Succesfully removed an item from shopping cart: Sauce Labs Backpack
+2023-07-07 15:28:11 Succesfully removed an item from shopping cart: Sauce Labs Bike Light
+2023-07-07 15:28:11 Succesfully removed an item from shopping cart: Sauce Labs Bolt T-Shirt
+2023-07-07 15:28:11 Succesfully removed an item from shopping cart: Sauce Labs Fleece Jacket
+2023-07-07 15:28:11 Succesfully removed an item from shopping cart: Sauce Labs Onesie
+2023-07-07 15:28:11 Succesfully removed an item from shopping cart: Test.allTheThings() T-Shirt (Red)
+2023-07-07 15:28:11 Succesfully removed all items from shopping cart.
