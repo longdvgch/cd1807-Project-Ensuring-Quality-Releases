@@ -238,7 +238,7 @@ stages:
         deploy:
           steps:
           - download: current
-            artifact: drop-ui-tests
+            artifact: drop-uitests
             
           - task: Bash@3
             displayName: Selenium Tests
@@ -247,7 +247,7 @@ stages:
               script: |
                 sudo mkdir -p /var/logs/seleniumlogfile.txt
                 sudo chmod 775 /var/logs/seleniumlogfile.txt
-                sudo python3 -u $(Pipeline.Workspace)/drop-ui-tests/functional_ui_test.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
+                sudo python3 -u $(Pipeline.Workspace)/drop-uitests/functional_ui_test.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
                 cd $(System.DefaultWorkingDirectory)
                 mkdir -p logs/selenium
                 pwd
