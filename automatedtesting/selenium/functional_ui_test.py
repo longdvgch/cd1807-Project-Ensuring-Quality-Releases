@@ -8,27 +8,11 @@ from selenium.webdriver.common.by import By
 
 import logging
 
-
-
-
- 
-
-
-
-
 # Start the browser and login with standard_user
 
 def functional_ui_test(user, password):
 
     logging.basicConfig(filename="./seleniumlog.txt", format="%(asctime)s %(message)s", filemode="w", level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S")
-
-
-
-
- 
-
-
-
 
     logging.info('Starting the browser...')
 
@@ -36,7 +20,7 @@ def functional_ui_test(user, password):
 
     options = ChromeOptions()
 
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
 
     driver = webdriver.Chrome(options=options)
 
