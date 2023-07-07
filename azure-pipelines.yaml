@@ -130,16 +130,16 @@ stages:
 
     #--------------------------------------------#    
     # FakeRestAPI - Archive
-    # ToDo: Complete the ArchiveFiles@2 task and publish step 
     - task: ArchiveFiles@2
       displayName: 'Archive FakeRestAPI'
       inputs:
-        rootFolderOrFile: 
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter/fakerestapi'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload Package'
+   # FakeRestAPI - Publish
+    - publish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+      displayName: 'Upload fakerrestapi Package'
       artifact: drop-fakerestapi
 
     #--------------------------------------------#  
@@ -148,7 +148,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: 'Archive PerformanceTestSuite'
       inputs:
-        rootFolderOrFile: 
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
         includeRootFolder: false
         archiveType: 'zip'
         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-perftests.zip'
@@ -183,11 +183,13 @@ stages:
             displayName: 'Install JMeter 5.2.1'
             inputs:
               jmeterVersion: '5.2.1'
+              
           - task: Bash@3
             displayName: 'Endurance Test Suite'
             inputs:
               targetType: 'inline'
               script: |
+                cat automatedtesting/jmeter/EnduranceTest.jmx
                 jmeter -n \
                   -t automatedtesting/jmeter/EnduranceTest.jmx \
                   -l endurance-test-report/endurance-results.jtl \
@@ -199,6 +201,7 @@ stages:
             inputs:
               htmlType: 'Jmeter'
               JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'
+              
           - task: Bash@3
             displayName: 'Stress Test Suite'
             inputs:
@@ -237,19 +240,20 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: current
-            artifact: drop-uitests
-            
           - task: Bash@3
+            displayName: Selenium Tests
             inputs:
               targetType: 'inline'
               script: |
-                #! /bin/bash
-                echo 'Hello from a custom VM with pre-installed Selenium, Chromium-browser & Chromedriver!'
-                source env/bin/activate
-                export PATH=$PATH:`pwd` # add chromedriver executable to path
-                python3 ../drop-ui-tests/functional_ui_test.py
-                cat selenium.log
+                sudo mkdir -p /var/logs/seleniumlogfile.txt
+                sudo chmod 775 /var/logs/seleniumlogfile.txt
+                unzip -o $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip
+                sudo python3 -u functional_ui_test.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
+                cd $(System.DefaultWorkingDirectory)
+                mkdir -p logs/selenium
+                pwd
+                cat seleniumlog.txt
+                ls -la
 
 #--------------------------------------Destroy Resources---------------------------
 #- stage: Destroy_Resources
