@@ -189,7 +189,6 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                cat automatedtesting/jmeter/EnduranceTest.jmx
                 jmeter -n \
                   -t automatedtesting/jmeter/test-suite/EnduranceTest.jmx \
                   -l endurance-test-report/endurance-results.jtl \
@@ -249,15 +248,9 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                sudo mkdir -p /var/logs/seleniumlogfile.txt
-                sudo chmod 775 /var/logs/seleniumlogfile.txt
                 unzip -o $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip
-                sudo python3 -u functional_ui_test.py 2>&1 | sudo tee -a /var/logs/seleniumlogfile.txt
-                cd $(System.DefaultWorkingDirectory)
-                mkdir -p logs/selenium
-                pwd
-                cat seleniumlog.txt
-                ls -la
+                sudo python3 -u functional_ui_test.py 2>&1 | sudo tee -a logs/seleniumlogfile.txt
+                cat logs/seleniumlogfile.txt
 
 #--------------------------------------Destroy Resources---------------------------
 #- stage: Destroy_Resources
