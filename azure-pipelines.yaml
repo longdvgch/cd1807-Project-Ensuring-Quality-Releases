@@ -248,9 +248,21 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                
+                apt-get update
+                apt-get upgrade -y
+                apt-get install -y python3-pip
+                apt-get install -y unzip
+                apt-get install -y chromium-browser
+                apt-get install -y python3-venv
+                python3 -m venv env
+                pip3 install selenium
+                wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+                unzip chromedriver_linux64.zip
+                rm chromedriver_linux64.zip
+                chown root:root chromedriver
+                chmod 777 chromedriver
                 unzip -o $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip
-                sudo python3 -u functional_ui_test.py 2>&1 | sudo tee -a seleniumlogfile.txt
+                python3 -u functional_ui_test.py
                 cat seleniumlogfile.txt
 
 #--------------------------------------Destroy Resources---------------------------
