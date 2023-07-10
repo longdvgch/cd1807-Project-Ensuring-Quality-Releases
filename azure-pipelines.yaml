@@ -248,10 +248,9 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                
                 unzip -o $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip
-                sudo python3 -u functional_ui_test.py 2>&1 | sudo tee -a logs/seleniumlogfile.txt
-                cat logs/seleniumlogfile.txt
+                sudo python3 -u functional_ui_test.py 2>&1 
+                cat seleniumlogfile.txt
 
 #--------------------------------------Destroy Resources---------------------------
 #- stage: Destroy_Resources
