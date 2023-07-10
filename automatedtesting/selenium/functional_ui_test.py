@@ -1,5 +1,5 @@
 # #!/usr/bin/env python
-
+import selenium
 from selenium import webdriver
 
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -12,7 +12,7 @@ import logging
 
 def functional_ui_test(user, password):
 
-    logging.basicConfig(filename="./seleniumlog.txt", format="%(asctime)s %(message)s", filemode="w", level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S")
+    logging.basicConfig(filename="./seleniumlogfile.txt", format="%(asctime)s %(message)s", filemode="w", level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S")
 
     logging.info('Starting the browser...')
 
