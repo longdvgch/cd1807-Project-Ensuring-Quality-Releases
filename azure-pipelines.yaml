@@ -130,7 +130,7 @@ stages:
   jobs:
   #--------------------------------------------#  
   # Deploy FakeRestAPI Web App
-  - deployment: Deploy_FakeRestAPI_&_Exec_Test
+  - deployment: DeployApi
     pool: myAgentPool      
     environment: 'test-vm'
     strategy:
