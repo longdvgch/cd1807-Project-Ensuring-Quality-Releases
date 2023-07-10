@@ -79,39 +79,7 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/environments/test'
         environmentServiceNameAzureRM: '$(azureServiceConnectionId)'
 
-#--------------------------------------------#    
-    # Postman - Install Newman    
-    # ToDo: Update the command and verify the working directory
-    - task: CmdLine@2
-      displayName: Install Newman
-      inputs:
-        script: |
-          sudo apt-get -y install npm
-          sudo npm install -g newman
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman Data Validation Test Suite    
-    - task: CmdLine@2
-      displayName: Run Data Validation Tests
-      continueOnError: true
-      inputs:
-        script: 'newman run Validation.postman_collection.json -e my-eviroment.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman Regression Test Suite    
-    - task: CmdLine@2
-      displayName: Run Regression Tests
-      continueOnError: true
-      inputs:
-        script: 'newman run Regression.postman_collection.json -e my-eviroment.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    # Postman - Publish Results 
-    # ToDo: Complete the task as explained here: https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/test/publish-test-results?view=azure-devops&tabs=trx%2Cyaml#yaml-snippet
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/TEST-*.xml'
-        searchFolder: 'automatedtesting/postman'
-        mergeTestResults: true
-        testRunTitle: 'Publish test results'
+
 
     #--------------------------------------------#
     # Selenium (UI) Test Suite - Archive the package  
@@ -179,11 +147,45 @@ stages:
               appType: webApp
               package: $(Pipeline.Workspace)/drop-fakerestapi/$(Build.BuildId)-fakerestapi.zip 
 
+          #--------------------------------------------#    
+          # Postman - Install Newman    
+          - task: CmdLine@2
+            displayName: Install Newman
+            inputs:
+              script: |
+                sudo apt-get -y install npm
+                sudo npm install -g newman
+              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+          # Postman Data Validation Test Suite    
+          - task: CmdLine@2
+            displayName: Run Data Validation Tests
+            continueOnError: true
+            inputs:
+              script: 'newman run Validation.postman_collection.json -e my-eviroment.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-DataValidation.xml'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+          # Postman Regression Test Suite    
+          - task: CmdLine@2
+            displayName: Run Regression Tests
+            continueOnError: true
+            inputs:
+              script: 'newman run Regression.postman_collection.json -e my-eviroment.postman_environment.json --reporters cli,junit --reporter-junit-export TEST-Regression.xml'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+          # Postman - Publish Results 
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/TEST-*.xml'
+              searchFolder: 'automatedtesting/postman'
+              mergeTestResults: true
+              testRunTitle: 'Publish test results'
+
+        #--------------------------------------------#    
+          # Jmeter - Install Jmeter
           - task: JMeterInstaller@0
             displayName: 'Install JMeter 5.2.1'
             inputs:
               jmeterVersion: '5.2.1'
-              
+          # Jmeter - Endurance Test Suite     
           - task: Bash@3
             displayName: 'Endurance Test Suite'
             inputs:
@@ -195,13 +197,13 @@ stages:
                   -l endurance-test-report/endurance-results.jtl \
                   -e \
                   -o endurance-test-report
-
+          # Publish - Endurance Test Suite
           - task: publishhtmlreport@1
             displayName: 'Publish Endurance Test Results'
             inputs:
               htmlType: 'Jmeter'
               JmeterReportsPath: '$(Build.SourcesDirectory)/endurance-test-report'
-              
+          # Jmeter - Stress Test Suite    
           - task: Bash@3
             displayName: 'Stress Test Suite'
             inputs:
@@ -212,13 +214,14 @@ stages:
                   -l stress-test-report/stress-results.jtl \
                   -e \
                   -o stress-test-report
-
+          # Publish - Stress Test Suite
           - task: publishhtmlreport@1
             displayName: 'Publish Stress Test Results'
             inputs:
               htmlType: 'Jmeter'
-              JmeterReportsPath: '$(Build.SourcesDirectory)/stress-test-report'    
-        
+              JmeterReportsPath: '$(Build.SourcesDirectory)/stress-test-report'   
+
+          # Print Performance Test Logs
           - task: Bash@3
             displayName: 'Print Performance Test Logs'
             inputs:
