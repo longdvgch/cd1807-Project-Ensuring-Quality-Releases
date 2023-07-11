@@ -62,4 +62,4 @@ def functional_ui_test(user, password):
     assert 0 == len(shopping_cart_total_items)
     logging.info("Succesfully removed all items from shopping cart.")
 
-fuctional_ui_test('standard_user', 'secret_sauce')
+functional_ui_test('standard_user', 'secret_sauce')
