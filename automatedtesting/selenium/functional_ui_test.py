@@ -7,6 +7,7 @@ import logging
 # Start the browser and login with standard_user
 def functional_ui_test(user, password):
     logging.info('Starting the browser...')
+    
     # --uncomment when running in Azure DevOps.
     options = ChromeOptions()
     options.add_argument('--no-sandbox')
