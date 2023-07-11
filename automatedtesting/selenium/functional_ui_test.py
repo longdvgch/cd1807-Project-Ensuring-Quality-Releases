@@ -11,7 +11,7 @@ import logging
 
 def functional_ui_test(user, password):
 
-    logging.basicConfig(filename="./selenium.log", format="%(asctime)s %(message)s", filemode="w", level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S")
+    logging.basicConfig(filename="./selenium.txt", format="%(asctime)s %(message)s", filemode="w", level=logging.INFO, datefmt="%Y-%m-%d %H:%M:%S")
 
     logging.info('Starting the browser...')
 
