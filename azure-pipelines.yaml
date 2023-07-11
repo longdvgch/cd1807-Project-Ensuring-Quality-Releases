@@ -247,23 +247,34 @@ stages:
             displayName: Selenium Tests
             inputs:
               targetType: 'inline'
-              script: |
-                apt-get update
-                apt-get upgrade -y
-                apt-get install -y python3-pip
-                apt-get install -y unzip
-                apt-get install -y chromium-browser
-                apt-get install -y python3-venv
-                python3 -m venv env
+              script: |           
+                #! /bin/bash
+                
+                sudo apt-get upgrade -y
+                sudo apt-get install python3-pip -y
+                sudo apt-get install unzip -y
+                sudo apt-get install -y chromium-browser
                 pip3 install selenium
-                wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
-                unzip chromedriver_linux64.zip
-                rm chromedriver_linux64.zip
-                chown root:root chromedriver
-                chmod 777 chromedriver
-                unzip -o $(Pipeline.Workspace)/drop-uitests/$(Build.BuildId)-uitests.zip
-                python3 -u functional_ui_test.py
-                cat seleniumlogfile.txt
+                cd ~/
+                DIR=/home/devopsagent/app
+                if [ ! -d "$DIR" ]; then
+                    mkdir app
+                fi
+                mv /home/devopsagent/myagent/_work/1/drop-uitests/$(Build.BuildId)-uitests.zip app
+                cd app
+                unzip -o $(Build.BuildId)-uitests.zip
+                FILE=/home/devopsagent/app/chromedriver_linux64.zip
+                if [ ! -f "$FILE" ]; then
+                    LATEST=$(wget -q -O - http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+                    wget http://chromedriver.storage.googleapis.com/$LATEST/chromedriver_linux64.zip
+                    unzip -o chromedriver_linux64.zip
+                    sudo ln -s $PWD/chromedriver /usr/local/bin/chromedriver
+                fi
+                export PATH=$PATH:/home/devopsagent/app
+                echo "Starting Selenium Tests"
+                pwd
+                python3 functional_ui_test.py >> selenium.log
+                echo "Completed Selenium Tests. Check selenium.log for results."
 
 #--------------------------------------Destroy Resources---------------------------
 #- stage: Destroy_Resources
